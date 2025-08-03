@@ -20,6 +20,8 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import projectHub.projectHub.Service.UserService;
 import projectHub.projectHub.auth.JwtAuthenticationFilter;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 @EnableWebSecurity
@@ -54,6 +56,19 @@ public class SecurityConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public WebMvcConfigurer corsConfigurer() {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/**") // Aplica a todas las rutas
+                        .allowedOrigins("*") // Permite cualquier origen
+                        .allowedMethods("*") // Permite todos los métodos (GET, POST, etc.)
+                        .allowedHeaders("*"); // Permite todos los encabezados
+            }
+        };
     }
 
     @Bean

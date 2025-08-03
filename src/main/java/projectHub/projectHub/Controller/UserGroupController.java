@@ -70,6 +70,16 @@ public class UserGroupController {
         return ResponseEntity.ok(groupDTO);
     }
 
+    @GetMapping("/editable/{leaderId}")
+    public ResponseEntity<List<UserGroupDTO>> getEditableGroups(@PathVariable Integer leaderId) {
+        List<UserGroupDTO> allGroups = groupService.findAll()
+                .stream()
+                .map(UserGroupMapper::toDTO)
+                .filter(group -> group.getLeaderId().equals(leaderId))
+                .toList();
+        return ResponseEntity.ok(allGroups);
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteGroup(@PathVariable Integer id) {
         groupService.deleteById(id);

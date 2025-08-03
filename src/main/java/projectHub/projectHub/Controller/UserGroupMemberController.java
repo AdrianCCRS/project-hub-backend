@@ -3,6 +3,7 @@ package projectHub.projectHub.Controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import projectHub.projectHub.Dto.UserDTO;
 import projectHub.projectHub.Dto.UserGroupDTO;
 import projectHub.projectHub.Dto.UserGroupMemberDTO;
 import projectHub.projectHub.Dto.UserGroupMemberResponseDTO;
@@ -59,10 +60,12 @@ public class UserGroupMemberController {
                 return ResponseEntity.badRequest().body("Invalid user or group ID: " + member);
             }
 
+            if (memberService.findByGroupId(member.getGroupId()).stream().anyMatch(u -> u.getUser().equals(user))) {
+                continue;
+            }
             UserGroupMember userGroupMember = new UserGroupMember();
             userGroupMember.setUser(user);
             userGroupMember.setGroup(group);
-
             UserGroupMember saved = memberService.save(userGroupMember);
             responses.add(UserGroupMemberMapper.toDTO(saved));
         }
@@ -72,8 +75,8 @@ public class UserGroupMemberController {
 
     // Obtener todos los miembros de un grupo
     @GetMapping("/group/{groupId}")
-    public ResponseEntity<List<UserGroupMemberResponseDTO>> getMembersByGroup(@PathVariable Integer groupId) {
-        return ResponseEntity.ok(memberService.findByGroupId(groupId).stream().map(UserGroupMemberMapper::toDTO).toList());
+    public ResponseEntity<List<UserDTO>> getMembersByGroup(@PathVariable Integer groupId) {
+        return ResponseEntity.ok(memberService.findByGroupId(groupId).stream().map(UserGroupMemberMapper::toUserDTO).toList());
     }
 
     // Obtener todos los grupos a los que pertenece un usuario
@@ -96,6 +99,21 @@ public class UserGroupMemberController {
         member.setGroup(group);
 
         memberService.delete(member);
+        return ResponseEntity.noContent().build();
+    }
+    //Eliminar un array de usuarios
+    @DeleteMapping("/deleteMultiple/group/{groupId}")
+    public ResponseEntity<Void> removeMultipleMembers(@PathVariable Integer groupId, @RequestBody List<UserGroupMemberDTO> members) {
+        for (UserGroupMemberDTO member : members) {
+            User user = new User();
+            user.setId(member.getUserId());
+            UserGroup group = new UserGroup();
+            group.setId(groupId);
+            UserGroupMember member1 = new UserGroupMember();
+            member1.setUser(user);
+            member1.setGroup(group);
+            memberService.delete(member1);
+        }
         return ResponseEntity.noContent().build();
     }
 }

@@ -8,4 +8,7 @@ public class UserDTO {
     private String firstName;
     private String lastName;
     private String email;
+    private String description;
+    private String program;
+    private String createdAt;
 }

@@ -18,6 +18,9 @@ public class UserGroupMemberMapper {
         userDTO.setFirstName(user.getFirstName());
         userDTO.setLastName(user.getLastName());
         userDTO.setEmail(user.getEmail());
+        userDTO.setProgram(user.getProgram());
+        userDTO.setDescription(user.getDescription());
+
 
         return new UserGroupMemberResponseDTO(userDTO);
     }
@@ -32,5 +35,17 @@ public class UserGroupMemberMapper {
             userGroupDTO.setLeaderId(group.getLeader().getId());
         }
         return userGroupDTO;
+    }
+
+    public static UserDTO toUserDTO (UserGroupMember member) {
+        User user = member.getUser();
+        UserDTO userDTO = new UserDTO();
+        userDTO.setId(user.getId());
+        userDTO.setFirstName(user.getFirstName());
+        userDTO.setLastName(user.getLastName());
+        userDTO.setEmail(user.getEmail());
+        userDTO.setProgram(user.getProgram());
+        userDTO.setDescription(user.getDescription());
+        return userDTO;
     }
 }
