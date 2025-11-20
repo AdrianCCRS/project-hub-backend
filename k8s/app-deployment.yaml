@@ -36,7 +36,7 @@ spec:
       containers:
       - name: projecthub
         image: docker.io/library/projecthub:latest
-        imagePullPolicy: Never  # Use local image only (for MicroK8s)
+        imagePullPolicy: IfNotPresent  # MicroK8s works better with IfNotPresent for local images
         ports:
         - containerPort: 8080
           name: http
