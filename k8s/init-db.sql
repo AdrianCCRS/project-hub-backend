@@ -12,6 +12,65 @@
 USE project_db;
 
 -- =====================================================
+-- 0. DROP TABLES IF EXIST (Clean slate)
+-- =====================================================
+SET FOREIGN_KEY_CHECKS = 0;
+DROP TABLE IF EXISTS user_group_members;
+DROP TABLE IF EXISTS projects;
+DROP TABLE IF EXISTS user_groups;
+DROP TABLE IF EXISTS users;
+SET FOREIGN_KEY_CHECKS = 1;
+
+-- =====================================================
+-- 1. CREATE TABLES
+-- =====================================================
+
+CREATE TABLE users (
+    id INTEGER NOT NULL AUTO_INCREMENT,
+    first_name VARCHAR(255),
+    last_name VARCHAR(255),
+    email VARCHAR(255) NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    program VARCHAR(255),
+    description TEXT,
+    created_at DATETIME(6),
+    updated_at DATETIME(6),
+    PRIMARY KEY (id),
+    UNIQUE KEY UK_email (email)
+) ENGINE=InnoDB;
+
+CREATE TABLE user_groups (
+    id INTEGER NOT NULL AUTO_INCREMENT,
+    name VARCHAR(255),
+    leader_id INTEGER,
+    created_at DATETIME(6),
+    updated_at DATETIME(6),
+    PRIMARY KEY (id),
+    CONSTRAINT FK_group_leader FOREIGN KEY (leader_id) REFERENCES users (id)
+) ENGINE=InnoDB;
+
+CREATE TABLE projects (
+    id INTEGER NOT NULL AUTO_INCREMENT,
+    title VARCHAR(255),
+    description TEXT,
+    repo_link VARCHAR(255),
+    status VARCHAR(255),
+    group_id INTEGER,
+    created_at DATETIME(6),
+    updated_at DATETIME(6),
+    PRIMARY KEY (id),
+    CONSTRAINT FK_project_group FOREIGN KEY (group_id) REFERENCES user_groups (id)
+) ENGINE=InnoDB;
+
+CREATE TABLE user_group_members (
+    user_id INTEGER NOT NULL,
+    group_id INTEGER NOT NULL,
+    PRIMARY KEY (user_id, group_id),
+    CONSTRAINT FK_member_user FOREIGN KEY (user_id) REFERENCES users (id),
+    CONSTRAINT FK_member_group FOREIGN KEY (group_id) REFERENCES user_groups (id)
+) ENGINE=InnoDB;
+
+-- =====================================================
 -- 1. INSERT USERS (150 users with realistic data)
 -- =====================================================
 -- Password for all users: "password123" (BCrypt encoded)
