@@ -19,15 +19,15 @@ echo -e "${BLUE}========================================${NC}"
 echo -e "${BLUE}Deploying ProjectHub to Kubernetes${NC}"
 echo -e "${BLUE}========================================${NC}"
 
-# Check if kubectl is available
-if ! command -v kubectl &> /dev/null; then
-    echo -e "${RED}✗ kubectl not found. Please install kubectl first.${NC}"
+# Check if kuber is available
+if ! command -v kuber &> /dev/null; then
+    echo -e "${RED}✗ kuber not found. Please install kuber first.${NC}"
     exit 1
 fi
 
 # Check if cluster is accessible
 echo -e "\n${GREEN}Checking Kubernetes cluster connection...${NC}"
-if ! kubectl cluster-info &> /dev/null; then
+if ! kuber cluster-info &> /dev/null; then
     echo -e "${RED}✗ Cannot connect to Kubernetes cluster${NC}"
     exit 1
 fi
@@ -35,29 +35,29 @@ echo -e "${GREEN}✓ Connected to Kubernetes cluster${NC}"
 
 # Create namespace
 echo -e "\n${GREEN}Step 1: Creating namespace...${NC}"
-kubectl apply -f ${K8S_DIR}/namespace.yaml
+kuber apply -f ${K8S_DIR}/namespace.yaml
 echo -e "${GREEN}✓ Namespace created/updated${NC}"
 
 # Deploy MySQL
 echo -e "\n${GREEN}Step 2: Deploying MySQL...${NC}"
-kubectl apply -f ${K8S_DIR}/mysql-configmap.yaml
-kubectl apply -f ${K8S_DIR}/mysql-secret.yaml
-kubectl apply -f ${K8S_DIR}/mysql-pvc.yaml
-kubectl apply -f ${K8S_DIR}/mysql-deployment.yaml
-kubectl apply -f ${K8S_DIR}/mysql-service.yaml
+kuber apply -f ${K8S_DIR}/mysql-configmap.yaml
+kuber apply -f ${K8S_DIR}/mysql-secret.yaml
+kuber apply -f ${K8S_DIR}/mysql-pvc.yaml
+kuber apply -f ${K8S_DIR}/mysql-deployment.yaml
+kuber apply -f ${K8S_DIR}/mysql-service.yaml
 echo -e "${GREEN}✓ MySQL resources created/updated${NC}"
 
 # Wait for MySQL to be ready
 echo -e "\n${GREEN}Step 3: Waiting for MySQL to be ready...${NC}"
-kubectl wait --for=condition=ready pod -l app=mysql -n ${NAMESPACE} --timeout=300s
+kuber wait --for=condition=ready pod -l app=mysql -n ${NAMESPACE} --timeout=300s
 echo -e "${GREEN}✓ MySQL is ready${NC}"
 
 # Deploy Application
 echo -e "\n${GREEN}Step 4: Deploying ProjectHub application...${NC}"
-kubectl apply -f ${K8S_DIR}/app-configmap.yaml
-kubectl apply -f ${K8S_DIR}/app-secret.yaml
-kubectl apply -f ${K8S_DIR}/app-deployment.yaml
-kubectl apply -f ${K8S_DIR}/app-service.yaml
+kuber apply -f ${K8S_DIR}/app-configmap.yaml
+kuber apply -f ${K8S_DIR}/app-secret.yaml
+kuber apply -f ${K8S_DIR}/app-deployment.yaml
+kuber apply -f ${K8S_DIR}/app-service.yaml
 echo -e "${GREEN}✓ Application resources created/updated${NC}"
 
 # Optional: Deploy Ingress
@@ -65,14 +65,14 @@ if [ -f "${K8S_DIR}/ingress.yaml" ]; then
     echo -e "\n${YELLOW}Deploy Ingress? (y/n)${NC}"
     read -r response
     if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
-        kubectl apply -f ${K8S_DIR}/ingress.yaml
+        kuber apply -f ${K8S_DIR}/ingress.yaml
         echo -e "${GREEN}✓ Ingress created/updated${NC}"
     fi
 fi
 
 # Wait for application to be ready
 echo -e "\n${GREEN}Step 5: Waiting for application to be ready...${NC}"
-kubectl wait --for=condition=ready pod -l app=projecthub -n ${NAMESPACE} --timeout=300s
+kuber wait --for=condition=ready pod -l app=projecthub -n ${NAMESPACE} --timeout=300s
 echo -e "${GREEN}✓ Application is ready${NC}"
 
 # Display deployment status
@@ -81,38 +81,38 @@ echo -e "${GREEN}Deployment Summary:${NC}"
 echo -e "${BLUE}========================================${NC}"
 
 echo -e "\n${GREEN}Pods:${NC}"
-kubectl get pods -n ${NAMESPACE}
+kuber get pods -n ${NAMESPACE}
 
 echo -e "\n${GREEN}Services:${NC}"
-kubectl get services -n ${NAMESPACE}
+kuber get services -n ${NAMESPACE}
 
 echo -e "\n${GREEN}Deployments:${NC}"
-kubectl get deployments -n ${NAMESPACE}
+kuber get deployments -n ${NAMESPACE}
 
 # Get service URL
 echo -e "\n${BLUE}========================================${NC}"
 echo -e "${GREEN}Access Information:${NC}"
 echo -e "${BLUE}========================================${NC}"
 
-SERVICE_TYPE=$(kubectl get service projecthub-service -n ${NAMESPACE} -o jsonpath='{.spec.type}')
+SERVICE_TYPE=$(kuber get service projecthub-service -n ${NAMESPACE} -o jsonpath='{.spec.type}')
 
 if [ "$SERVICE_TYPE" == "LoadBalancer" ]; then
     echo -e "\n${YELLOW}Waiting for LoadBalancer IP...${NC}"
     sleep 5
-    EXTERNAL_IP=$(kubectl get service projecthub-service -n ${NAMESPACE} -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+    EXTERNAL_IP=$(kuber get service projecthub-service -n ${NAMESPACE} -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
     
     if [ -z "$EXTERNAL_IP" ] || [ "$EXTERNAL_IP" == "null" ]; then
-        EXTERNAL_IP=$(kubectl get service projecthub-service -n ${NAMESPACE} -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
+        EXTERNAL_IP=$(kuber get service projecthub-service -n ${NAMESPACE} -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
     fi
     
     if [ -n "$EXTERNAL_IP" ] && [ "$EXTERNAL_IP" != "null" ]; then
         echo -e "${GREEN}Application URL: http://${EXTERNAL_IP}${NC}"
     else
         echo -e "${YELLOW}LoadBalancer IP pending. Run this command to check:${NC}"
-        echo -e "${BLUE}kubectl get service projecthub-service -n ${NAMESPACE}${NC}"
+        echo -e "${BLUE}kuber get service projecthub-service -n ${NAMESPACE}${NC}"
     fi
 elif [ "$SERVICE_TYPE" == "NodePort" ]; then
-    NODE_PORT=$(kubectl get service projecthub-service -n ${NAMESPACE} -o jsonpath='{.spec.ports[0].nodePort}')
+    NODE_PORT=$(kuber get service projecthub-service -n ${NAMESPACE} -o jsonpath='{.spec.ports[0].nodePort}')
     echo -e "${GREEN}Application accessible via NodePort: ${NODE_PORT}${NC}"
     echo -e "${BLUE}Use: http://<node-ip>:${NODE_PORT}${NC}"
 fi
@@ -120,6 +120,6 @@ fi
 echo -e "\n${GREEN}✓ Deployment completed successfully!${NC}"
 
 echo -e "\n${BLUE}Useful commands:${NC}"
-echo -e "  View logs: ${GREEN}kubectl logs -f -l app=projecthub -n ${NAMESPACE}${NC}"
-echo -e "  Scale app: ${GREEN}kubectl scale deployment projecthub-app --replicas=3 -n ${NAMESPACE}${NC}"
+echo -e "  View logs: ${GREEN}kuber logs -f -l app=projecthub -n ${NAMESPACE}${NC}"
+echo -e "  Scale app: ${GREEN}kuber scale deployment projecthub-app --replicas=3 -n ${NAMESPACE}${NC}"
 echo -e "  Delete all: ${GREEN}./scripts/cleanup-k8s.sh${NC}"
