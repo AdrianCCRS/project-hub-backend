@@ -1,0 +1,29 @@
+# Backend Namespace
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: projecthub-backend
+  labels:
+    name: projecthub-backend
+    tier: backend
+    environment: production
+---
+# Database Namespace
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: projecthub-database
+  labels:
+    name: projecthub-database
+    tier: database
+    environment: production
+---
+# Frontend Namespace
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: projecthub-frontend
+  labels:
+    name: projecthub-frontend
+    tier: frontend
+    environment: production

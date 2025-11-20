@@ -1,0 +1,30 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: projecthub-ingress
+  namespace: projecthub-backend
+  annotations:
+    # For NGINX Ingress Controller
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    # Enable CORS if needed
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    # SSL redirect (uncomment when you have TLS configured)
+    # nginx.ingress.kubernetes.io/ssl-redirect: "true"
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: projecthub.local  # Change this to your domain
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: projecthub-service
+            port:
+              number: 80
+  # Uncomment when you have TLS certificates
+  # tls:
+  # - hosts:
+  #   - projecthub.local
+  #   secretName: projecthub-tls

@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql-config
+  namespace: projecthub-database
+data:
+  MYSQL_DATABASE: "project_db"

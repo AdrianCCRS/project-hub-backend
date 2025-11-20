@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  # MySQL Database
+  mysql:
+    image: mysql:8.0
+    container_name: projecthub-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: project_db
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_USER: projecthub
+      MYSQL_PASSWORD: projecthub123
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - projecthub-network
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-prootpassword" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  # Spring Boot Application
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: projecthub-app-backend
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/project_db
+      SPRING_DATASOURCE_USERNAME: projecthub
+      SPRING_DATASOURCE_PASSWORD: projecthub123
+      JWT_SECRET: hiR5hBAZuEOzWBSby2WRXrtCqpwRD6HFhM690jMdK9M=
+    ports:
+      - "8080:8080"
+    networks:
+      - projecthub-network
+    # healthcheck:
+    #   test: [ "CMD", "curl", "-f", "http://localhost:8080/" ]
+    #   interval: 30s
+    #   timeout: 5s
+    #   retries: 3
+    #   start_period: 60s
+
+volumes:
+  mysql-data:
+    driver: local
+
+networks:
+  projecthub-network:
+    driver: bridge
