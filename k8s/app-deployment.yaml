@@ -35,7 +35,7 @@ spec:
           echo "MySQL is ready!"
       containers:
       - name: projecthub
-        image: projecthub:latest
+        image: docker.io/library/projecthub:latest
         imagePullPolicy: Never  # Use local image only (for MicroK8s)
         ports:
         - containerPort: 8080
