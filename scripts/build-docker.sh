@@ -54,27 +54,24 @@ else
     echo -e "\n${BLUE}ℹ DOCKER_REGISTRY not set, skipping push to registry${NC}"
 fi
 
-# Import to MicroK8s if available
+# Push to MicroK8s local registry if available
 if command -v microk8s &> /dev/null; then
-    echo -e "\n${GREEN}Step 4: Importing image to MicroK8s...${NC}"
+    echo -e "\n${GREEN}Step 4: Pushing to MicroK8s local registry...${NC}"
     
-    # Save Docker image to tar
-    TEMP_TAR="/tmp/${IMAGE_NAME}-${VERSION}.tar"
-    docker save ${IMAGE_NAME}:${VERSION} > ${TEMP_TAR}
+    # Tag image for local registry
+    docker tag ${IMAGE_NAME}:${VERSION} localhost:32000/${IMAGE_NAME}:${VERSION}
     
-    # Import to MicroK8s k8s.io namespace (required for Kubernetes to find it)
-    microk8s ctr --namespace k8s.io image import ${TEMP_TAR}
+    # Push to MicroK8s registry
+    docker push localhost:32000/${IMAGE_NAME}:${VERSION}
     
-    # Clean up tar file
-    rm ${TEMP_TAR}
-    
-    echo -e "${GREEN}✓ Image imported to MicroK8s (k8s.io namespace)${NC}"
-    
-    # Verify image is available in k8s.io namespace
-    echo -e "\n${BLUE}Verifying image in MicroK8s k8s.io namespace:${NC}"
-    microk8s ctr --namespace k8s.io images ls | grep ${IMAGE_NAME} || echo -e "${RED}Warning: Image not found in k8s.io namespace${NC}"
+    if [ $? -eq 0 ]; then
+        echo -e "${GREEN}✓ Image pushed to MicroK8s registry (localhost:32000)${NC}"
+    else
+        echo -e "${RED}✗ Failed to push to MicroK8s registry${NC}"
+        echo -e "${YELLOW}Make sure MicroK8s registry is enabled: microk8s enable registry${NC}"
+    fi
 else
-    echo -e "\n${BLUE}ℹ MicroK8s not detected, skipping import${NC}"
+    echo -e "\n${BLUE}ℹ MicroK8s not detected, skipping registry push${NC}"
 fi
 
 # Display image info

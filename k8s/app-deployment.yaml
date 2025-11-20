@@ -35,8 +35,8 @@ spec:
           echo "MySQL is ready!"
       containers:
       - name: projecthub
-        image: docker.io/library/projecthub:latest
-        imagePullPolicy: IfNotPresent  # MicroK8s works better with IfNotPresent for local images
+        image: localhost:32000/projecthub:latest
+        imagePullPolicy: Always
         ports:
         - containerPort: 8080
           name: http
