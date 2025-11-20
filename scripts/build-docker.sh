@@ -54,6 +54,29 @@ else
     echo -e "\n${BLUE}ℹ DOCKER_REGISTRY not set, skipping push to registry${NC}"
 fi
 
+# Import to MicroK8s if available
+if command -v microk8s &> /dev/null; then
+    echo -e "\n${GREEN}Step 4: Importing image to MicroK8s...${NC}"
+    
+    # Save Docker image to tar
+    TEMP_TAR="/tmp/${IMAGE_NAME}-${VERSION}.tar"
+    docker save ${IMAGE_NAME}:${VERSION} > ${TEMP_TAR}
+    
+    # Import to MicroK8s
+    microk8s ctr image import ${TEMP_TAR}
+    
+    # Clean up tar file
+    rm ${TEMP_TAR}
+    
+    echo -e "${GREEN}✓ Image imported to MicroK8s${NC}"
+    
+    # Verify image is available
+    echo -e "\n${BLUE}Verifying image in MicroK8s:${NC}"
+    microk8s ctr images ls | grep ${IMAGE_NAME} || echo -e "${RED}Warning: Image not found in MicroK8s${NC}"
+else
+    echo -e "\n${BLUE}ℹ MicroK8s not detected, skipping import${NC}"
+fi
+
 # Display image info
 echo -e "\n${BLUE}========================================${NC}"
 echo -e "${GREEN}Build Summary:${NC}"
@@ -61,6 +84,9 @@ echo -e "  Image: ${IMAGE_NAME}:${VERSION}"
 echo -e "  Size: $(docker images ${IMAGE_NAME}:${VERSION} --format "{{.Size}}")"
 if [ -n "$REGISTRY" ]; then
     echo -e "  Registry: ${REGISTRY}/${IMAGE_NAME}:${VERSION}"
+fi
+if command -v microk8s &> /dev/null; then
+    echo -e "  MicroK8s: ✓ Imported"
 fi
 echo -e "${BLUE}========================================${NC}"
 
