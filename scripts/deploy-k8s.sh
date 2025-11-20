@@ -12,8 +12,9 @@ YELLOW='\033[1;33m'
 RED='\033[0;31m'
 NC='\033[0m' # No Color
 
-NAMESPACE="projecthub"
-K8S_DIR="k8s"
+NAMESPACE_BACKEND="projecthub-backend"
+NAMESPACE_DATABASE="projecthub-database"
+K8S_DIR="../k8s"
 
 echo -e "${BLUE}========================================${NC}"
 echo -e "${BLUE}Deploying ProjectHub to Kubernetes${NC}"
@@ -49,7 +50,7 @@ echo -e "${GREEN}✓ MySQL resources created/updated${NC}"
 
 # Wait for MySQL to be ready
 echo -e "\n${GREEN}Step 3: Waiting for MySQL to be ready...${NC}"
-microk8s kubectl wait --for=condition=ready pod -l app=mysql -n ${NAMESPACE} --timeout=300s
+microk8s kubectl wait --for=condition=ready pod -l app=mysql -n ${NAMESPACE_DATABASE} --timeout=300s
 echo -e "${GREEN}✓ MySQL is ready${NC}"
 
 # Deploy Application
@@ -72,7 +73,7 @@ fi
 
 # Wait for application to be ready
 echo -e "\n${GREEN}Step 5: Waiting for application to be ready...${NC}"
-microk8s kubectl wait --for=condition=ready pod -l app=projecthub -n ${NAMESPACE} --timeout=300s
+microk8s kubectl wait --for=condition=ready pod -l app=projecthub -n ${NAMESPACE_BACKEND} --timeout=300s
 echo -e "${GREEN}✓ Application is ready${NC}"
 
 # Display deployment status
@@ -80,39 +81,46 @@ echo -e "\n${BLUE}========================================${NC}"
 echo -e "${GREEN}Deployment Summary:${NC}"
 echo -e "${BLUE}========================================${NC}"
 
-echo -e "\n${GREEN}Pods:${NC}"
-microk8s kubectl get pods -n ${NAMESPACE}
+echo -e "\n${GREEN}Backend Pods:${NC}"
+microk8s kubectl get pods -n ${NAMESPACE_BACKEND}
 
-echo -e "\n${GREEN}Services:${NC}"
-microk8s kubectl get services -n ${NAMESPACE}
+echo -e "\n${GREEN}Database Pods:${NC}"
+microk8s kubectl get pods -n ${NAMESPACE_DATABASE}
+
+echo -e "\n${GREEN}Backend Services:${NC}"
+microk8s kubectl get services -n ${NAMESPACE_BACKEND}
+
+echo -e "\n${GREEN}Database Services:${NC}"
+microk8s kubectl get services -n ${NAMESPACE_DATABASE}
 
 echo -e "\n${GREEN}Deployments:${NC}"
-microk8s kubectl get deployments -n ${NAMESPACE}
+microk8s kubectl get deployments -n ${NAMESPACE_BACKEND}
+microk8s kubectl get deployments -n ${NAMESPACE_DATABASE}
 
 # Get service URL
 echo -e "\n${BLUE}========================================${NC}"
 echo -e "${GREEN}Access Information:${NC}"
 echo -e "${BLUE}========================================${NC}"
 
-SERVICE_TYPE=$(microk8s kubectl get service projecthub-service -n ${NAMESPACE} -o jsonpath='{.spec.type}')
+SERVICE_TYPE=$(microk8s kubectl get service projecthub-service -n ${NAMESPACE_BACKEND} -o jsonpath='{.spec.type}')
 
 if [ "$SERVICE_TYPE" == "LoadBalancer" ]; then
     echo -e "\n${YELLOW}Waiting for LoadBalancer IP...${NC}"
     sleep 5
-    EXTERNAL_IP=$(microk8s kubectl get service projecthub-service -n ${NAMESPACE} -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+    EXTERNAL_IP=$(microk8s kubectl get service projecthub-service -n ${NAMESPACE_BACKEND} -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
     
     if [ -z "$EXTERNAL_IP" ] || [ "$EXTERNAL_IP" == "null" ]; then
-        EXTERNAL_IP=$(microk8s kubectl get service projecthub-service -n ${NAMESPACE} -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
+        EXTERNAL_IP=$(microk8s kubectl get service projecthub-service -n ${NAMESPACE_BACKEND} -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
     fi
     
     if [ -n "$EXTERNAL_IP" ] && [ "$EXTERNAL_IP" != "null" ]; then
         echo -e "${GREEN}Application URL: http://${EXTERNAL_IP}${NC}"
     else
         echo -e "${YELLOW}LoadBalancer IP pending. Run this command to check:${NC}"
-        echo -e "${BLUE}microk8s kubectl get service projecthub-service -n ${NAMESPACE}${NC}"
+        echo -e "${BLUE}microk8s kubectl get service projecthub-service -n ${NAMESPACE_BACKEND}${NC}"
     fi
 elif [ "$SERVICE_TYPE" == "NodePort" ]; then
-    NODE_PORT=$(microk8s kubectl get service projecthub-service -n ${NAMESPACE} -o jsonpath='{.spec.ports[0].nodePort}')
+    NODE_PORT=$(microk8s kubectl get service projecthub-service -n ${NAMESPACE_BACKEND} -o jsonpath='{.spec.ports[0].nodePort}')
     echo -e "${GREEN}Application accessible via NodePort: ${NODE_PORT}${NC}"
     echo -e "${BLUE}Use: http://<node-ip>:${NODE_PORT}${NC}"
 fi
@@ -120,6 +128,7 @@ fi
 echo -e "\n${GREEN}✓ Deployment completed successfully!${NC}"
 
 echo -e "\n${BLUE}Useful commands:${NC}"
-echo -e "  View logs: ${GREEN}microk8s kubectl logs -f -l app=projecthub -n ${NAMESPACE}${NC}"
-echo -e "  Scale app: ${GREEN}microk8s kubectl scale deployment projecthub-app --replicas=3 -n ${NAMESPACE}${NC}"
+echo -e "  View backend logs: ${GREEN}microk8s kubectl logs -f -l app=projecthub -n ${NAMESPACE_BACKEND}${NC}"
+echo -e "  View database logs: ${GREEN}microk8s kubectl logs -f -l app=mysql -n ${NAMESPACE_DATABASE}${NC}"
+echo -e "  Scale app: ${GREEN}microk8s kubectl scale deployment projecthub-app --replicas=3 -n ${NAMESPACE_BACKEND}${NC}"
 echo -e "  Delete all: ${GREEN}./scripts/cleanup-k8s.sh${NC}"
