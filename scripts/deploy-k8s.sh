@@ -19,11 +19,6 @@ echo -e "${BLUE}========================================${NC}"
 echo -e "${BLUE}Deploying ProjectHub to Kubernetes${NC}"
 echo -e "${BLUE}========================================${NC}"
 
-# Check if kuber is available
-if ! command -v kuber &> /dev/null; then
-    echo -e "${RED}✗ kuber not found. Please install kuber first.${NC}"
-    exit 1
-fi
 
 # Check if cluster is accessible
 echo -e "\n${GREEN}Checking Kubernetes cluster connection...${NC}"
