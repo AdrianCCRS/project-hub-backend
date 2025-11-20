@@ -62,17 +62,17 @@ if command -v microk8s &> /dev/null; then
     TEMP_TAR="/tmp/${IMAGE_NAME}-${VERSION}.tar"
     docker save ${IMAGE_NAME}:${VERSION} > ${TEMP_TAR}
     
-    # Import to MicroK8s
-    microk8s ctr image import ${TEMP_TAR}
+    # Import to MicroK8s k8s.io namespace (required for Kubernetes to find it)
+    microk8s ctr --namespace k8s.io image import ${TEMP_TAR}
     
     # Clean up tar file
     rm ${TEMP_TAR}
     
-    echo -e "${GREEN}✓ Image imported to MicroK8s${NC}"
+    echo -e "${GREEN}✓ Image imported to MicroK8s (k8s.io namespace)${NC}"
     
-    # Verify image is available
-    echo -e "\n${BLUE}Verifying image in MicroK8s:${NC}"
-    microk8s ctr images ls | grep ${IMAGE_NAME} || echo -e "${RED}Warning: Image not found in MicroK8s${NC}"
+    # Verify image is available in k8s.io namespace
+    echo -e "\n${BLUE}Verifying image in MicroK8s k8s.io namespace:${NC}"
+    microk8s ctr --namespace k8s.io images ls | grep ${IMAGE_NAME} || echo -e "${RED}Warning: Image not found in k8s.io namespace${NC}"
 else
     echo -e "\n${BLUE}ℹ MicroK8s not detected, skipping import${NC}"
 fi
