@@ -1,0 +1,234 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql-initdb
+  namespace: projecthub-database
+data:
+  init-db.sql: |
+    -- =====================================================
+    -- ProjectHub Database Initialization Script
+    -- Performance Testing Data
+    -- =====================================================
+    -- This script creates test data for performance testing
+    -- - 150 Users
+    -- - 50 User Groups
+    -- - 300 Projects
+    -- - Group memberships
+    -- =====================================================
+
+    USE project_db;
+
+    -- =====================================================
+    -- 1. INSERT USERS (150 users with realistic data)
+    -- =====================================================
+    -- Password for all users: "password123" (BCrypt encoded)
+    -- $2a$10$N9qo8uLOickgx2ZMRZoMye
+
+    INSERT INTO users (first_name, last_name, email, password, program, description, created_at, updated_at) VALUES
+    -- Computer Science Students
+    ('Adrian', 'Rodriguez', 'adrian.rodriguez@university.edu', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIrssjO2uCwosnZJEFC0NIOve6ZLa', 'Computer Science', 'Full-stack developer interested in cloud computing', NOW(), NOW()),
+    ('Maria', 'Garcia', 'maria.garcia@university.edu', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIrssjO2uCwosnZJEFC0NIOve6ZLa', 'Computer Science', 'AI and machine learning enthusiast', NOW(), NOW()),
+    ('Carlos', 'Martinez', 'carlos.martinez@university.edu', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIrssjO2uCwosnZJEFC0NIOve6ZLa', 'Computer Science', 'Backend specialist, loves microservices', NOW(), NOW()),
+    ('Ana', 'Lopez', 'ana.lopez@university.edu', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIrssjO2uCwosnZJEFC0NIOve6ZLa', 'Computer Science', 'Frontend developer, React expert', NOW(), NOW()),
+    ('Luis', 'Hernandez', 'luis.hernandez@university.edu', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIrssjO2uCwosnZJEFC0NIOve6ZLa', 'Computer Science', 'DevOps engineer, Kubernetes certified', NOW(), NOW()),
+    ('Sofia', 'Gonzalez', 'sofia.gonzalez@university.edu', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIrssjO2uCwosnZJEFC0NIOve6ZLa', 'Computer Science', 'Mobile app developer, Flutter specialist', NOW(), NOW()),
+    ('Diego', 'Perez', 'diego.perez@university.edu', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIrssjO2uCwosnZJEFC0NIOve6ZLa', 'Computer Science', 'Database administrator and SQL expert', NOW(), NOW()),
+    ('Isabella', 'Sanchez', 'isabella.sanchez@university.edu', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIrssjO2uCwosnZJEFC0NIOve6ZLa', 'Computer Science', 'Cybersecurity researcher', NOW(), NOW()),
+    ('Miguel', 'Ramirez', 'miguel.ramirez@university.edu', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIrssjO2uCwosnZJEFC0NIOve6ZLa', 'Computer Science', 'Game developer using Unity', NOW(), NOW()),
+    ('Valentina', 'Torres', 'valentina.torres@university.edu', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIrssjO2uCwosnZJEFC0NIOve6ZLa', 'Computer Science', 'Data scientist and Python developer', NOW(), NOW()),
+
+    -- Software Engineering Students
+    ('Javier', 'Flores', 'javier.flores@university.edu', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIrssjO2uCwosnZJEFC0NIOve6ZLa', 'Software Engineering', 'Agile methodologies expert', NOW(), NOW()),
+    ('Camila', 'Rivera', 'camila.rivera@university.edu', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIrssjO2uCwosnZJEFC0NIOve6ZLa', 'Software Engineering', 'UX/UI designer and developer', NOW(), NOW()),
+    ('Daniel', 'Gomez', 'daniel.gomez@university.edu', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIrssjO2uCwosnZJEFC0NIOve6ZLa', 'Software Engineering', 'Quality assurance specialist', NOW(), NOW()),
+    ('Lucia', 'Diaz', 'lucia.diaz@university.edu', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIrssjO2uCwosnZJEFC0NIOve6ZLa', 'Software Engineering', 'Project manager and Scrum master', NOW(), NOW()),
+    ('Fernando', 'Morales', 'fernando.morales@university.edu', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIrssjO2uCwosnZJEFC0NIOve6ZLa', 'Software Engineering', 'Cloud architect, AWS certified', NOW(), NOW()),
+    ('Paula', 'Jimenez', 'paula.jimenez@university.edu', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIrssjO2uCwosnZJEFC0NIOve6ZLa', 'Software Engineering', 'API design specialist', NOW(), NOW()),
+    ('Roberto', 'Ruiz', 'roberto.ruiz@university.edu', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIrssjO2uCwosnZJEFC0NIOve6ZLa', 'Software Engineering', 'Blockchain developer', NOW(), NOW()),
+    ('Elena', 'Vargas', 'elena.vargas@university.edu', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIrssjO2uCwosnZJEFC0NIOve6ZLa', 'Software Engineering', 'Testing automation expert', NOW(), NOW()),
+    ('Andres', 'Castro', 'andres.castro@university.edu', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIrssjO2uCwosnZJEFC0NIOve6ZLa', 'Software Engineering', 'Microservices architect', NOW(), NOW()),
+    ('Natalia', 'Ortiz', 'natalia.ortiz@university.edu', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIrssjO2uCwosnZJEFC0NIOve6ZLa', 'Software Engineering', 'Performance optimization specialist', NOW(), NOW()),
+
+    -- Information Systems Students
+    ('Ricardo', 'Silva', 'ricardo.silva@university.edu', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIrssjO2uCwosnZJEFC0NIOve6ZLa', 'Information Systems', 'Business analyst and data modeler', NOW(), NOW()),
+    ('Carolina', 'Mendoza', 'carolina.mendoza@university.edu', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIrssjO2uCwosnZJEFC0NIOve6ZLa', 'Information Systems', 'ERP systems specialist', NOW(), NOW()),
+    ('Gabriel', 'Reyes', 'gabriel.reyes@university.edu', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIrssjO2uCwosnZJEFC0NIOve6ZLa', 'Information Systems', 'Database design expert', NOW(), NOW()),
+    ('Daniela', 'Herrera', 'daniela.herrera@university.edu', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIrssjO2uCwosnZJEFC0NIOve6ZLa', 'Information Systems', 'IT project manager', NOW(), NOW()),
+    ('Sebastian', 'Medina', 'sebastian.medina@university.edu', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIrssjO2uCwosnZJEFC0NIOve6ZLa', 'Information Systems', 'Systems integration specialist', NOW(), NOW()),
+    ('Mariana', 'Romero', 'mariana.romero@university.edu', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIrssjO2uCwosnZJEFC0NIOve6ZLa', 'Information Systems', 'Business intelligence analyst', NOW(), NOW()),
+    ('Alejandro', 'Gutierrez', 'alejandro.gutierrez@university.edu', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIrssjO2uCwosnZJEFC0NIOve6ZLa', 'Information Systems', 'CRM systems developer', NOW(), NOW()),
+    ('Victoria', 'Aguilar', 'victoria.aguilar@university.edu', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIrssjO2uCwosnZJEFC0NIOve6ZLa', 'Information Systems', 'Data warehouse architect', NOW(), NOW()),
+    ('Mateo', 'Navarro', 'mateo.navarro@university.edu', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIrssjO2uCwosnZJEFC0NIOve6ZLa', 'Information Systems', 'IT consultant', NOW(), NOW()),
+    ('Gabriela', 'Rojas', 'gabriela.rojas@university.edu', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIrssjO2uCwosnZJEFC0NIOve6ZLa', 'Information Systems', 'Process automation specialist', NOW(), NOW());
+
+    -- Generate 120 more users programmatically
+    -- Users 31-150
+    INSERT INTO users (first_name, last_name, email, password, program, description, created_at, updated_at)
+    SELECT 
+        CONCAT('User', n.num) as first_name,
+        CONCAT('Test', n.num) as last_name,
+        CONCAT('user', n.num, '@university.edu') as email,
+        '$2a$10$N9qo8uLOickgx2ZMRZoMyeIrssjO2uCwosnZJEFC0NIOve6ZLa' as password,
+        ELT(MOD(n.num, 3) + 1, 'Computer Science', 'Software Engineering', 'Information Systems') as program,
+        CONCAT('Test user ', n.num, ' for performance testing') as description,
+        DATE_SUB(NOW(), INTERVAL FLOOR(RAND() * 365) DAY) as created_at,
+        NOW() as updated_at
+    FROM (
+        SELECT 31 + a.N + b.N * 10 + c.N * 100 as num
+        FROM 
+            (SELECT 0 AS N UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) a,
+            (SELECT 0 AS N UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) b,
+            (SELECT 0 AS N UNION SELECT 1) c
+        WHERE 31 + a.N + b.N * 10 + c.N * 100 <= 150
+    ) n;
+
+    -- =====================================================
+    -- 2. INSERT USER GROUPS (50 groups)
+    -- =====================================================
+
+    INSERT INTO user_groups (name, leader_id, created_at, updated_at) VALUES
+    ('Cloud Computing Team', 1, DATE_SUB(NOW(), INTERVAL 120 DAY), NOW()),
+    ('AI Research Group', 2, DATE_SUB(NOW(), INTERVAL 110 DAY), NOW()),
+    ('Web Development Squad', 3, DATE_SUB(NOW(), INTERVAL 100 DAY), NOW()),
+    ('Mobile App Innovators', 6, DATE_SUB(NOW(), INTERVAL 95 DAY), NOW()),
+    ('Database Masters', 7, DATE_SUB(NOW(), INTERVAL 90 DAY), NOW()),
+    ('Security Experts', 8, DATE_SUB(NOW(), INTERVAL 85 DAY), NOW()),
+    ('Game Dev Studio', 9, DATE_SUB(NOW(), INTERVAL 80 DAY), NOW()),
+    ('Data Science Lab', 10, DATE_SUB(NOW(), INTERVAL 75 DAY), NOW()),
+    ('Agile Warriors', 11, DATE_SUB(NOW(), INTERVAL 70 DAY), NOW()),
+    ('UX/UI Designers', 12, DATE_SUB(NOW(), INTERVAL 65 DAY), NOW()),
+    ('QA Automation Team', 13, DATE_SUB(NOW(), INTERVAL 60 DAY), NOW()),
+    ('DevOps Engineers', 5, DATE_SUB(NOW(), INTERVAL 55 DAY), NOW()),
+    ('API Architects', 16, DATE_SUB(NOW(), INTERVAL 50 DAY), NOW()),
+    ('Blockchain Builders', 17, DATE_SUB(NOW(), INTERVAL 45 DAY), NOW()),
+    ('Performance Optimizers', 20, DATE_SUB(NOW(), INTERVAL 40 DAY), NOW()),
+    ('Business Intelligence', 26, DATE_SUB(NOW(), INTERVAL 35 DAY), NOW()),
+    ('ERP Specialists', 22, DATE_SUB(NOW(), INTERVAL 30 DAY), NOW()),
+    ('Systems Integrators', 25, DATE_SUB(NOW(), INTERVAL 25 DAY), NOW()),
+    ('Full Stack Developers', 4, DATE_SUB(NOW(), INTERVAL 20 DAY), NOW()),
+    ('Backend Specialists', 19, DATE_SUB(NOW(), INTERVAL 15 DAY), NOW());
+
+    -- Generate 30 more groups
+    INSERT INTO user_groups (name, leader_id, created_at, updated_at)
+    SELECT 
+        CONCAT('Project Team ', n.num) as name,
+        (n.num MOD 30) + 1 as leader_id,
+        DATE_SUB(NOW(), INTERVAL FLOOR(RAND() * 180) DAY) as created_at,
+        NOW() as updated_at
+    FROM (
+        SELECT 21 + a.N + b.N * 10 as num
+        FROM 
+            (SELECT 0 AS N UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) a,
+            (SELECT 0 AS N UNION SELECT 1 UNION SELECT 2) b
+        WHERE 21 + a.N + b.N * 10 <= 50
+    ) n;
+
+    -- =====================================================
+    -- 3. INSERT USER GROUP MEMBERS (assign users to groups)
+    -- =====================================================
+
+    -- Add leaders to their own groups
+    INSERT INTO user_group_members (user_id, group_id)
+    SELECT leader_id, id FROM user_groups;
+
+    -- Add random members to groups (3-8 members per group)
+    INSERT INTO user_group_members (user_id, group_id)
+    SELECT DISTINCT
+        (FLOOR(RAND() * 150) + 1) as user_id,
+        g.id as group_id
+    FROM user_groups g
+    CROSS JOIN (
+        SELECT 1 as n UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 
+        UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8
+    ) numbers
+    WHERE NOT EXISTS (
+        SELECT 1 FROM user_group_members ugm 
+        WHERE ugm.user_id = (FLOOR(RAND() * 150) + 1) 
+        AND ugm.group_id = g.id
+    )
+    LIMIT 300;
+
+    -- =====================================================
+    -- 4. INSERT PROJECTS (300 projects)
+    -- =====================================================
+
+    INSERT INTO projects (title, description, repo_link, status, group_id, created_at, updated_at) VALUES
+    -- Cloud Computing Projects
+    ('Cloud Migration Platform', 'Enterprise-grade cloud migration tool with automated resource provisioning and cost optimization', 'https://github.com/projecthub/cloud-migration', 'IN_PROGRESS', 1, DATE_SUB(NOW(), INTERVAL 90 DAY), NOW()),
+    ('Serverless API Gateway', 'Scalable API gateway built on serverless architecture with auto-scaling capabilities', 'https://github.com/projecthub/serverless-gateway', 'IN_PROGRESS', 1, DATE_SUB(NOW(), INTERVAL 85 DAY), NOW()),
+    ('Kubernetes Monitoring Dashboard', 'Real-time monitoring and alerting system for Kubernetes clusters', 'https://github.com/projecthub/k8s-monitor', 'COMPLETED', 1, DATE_SUB(NOW(), INTERVAL 120 DAY), NOW()),
+
+    -- AI/ML Projects
+    ('Image Recognition System', 'Deep learning model for real-time image classification and object detection', 'https://github.com/projecthub/image-recognition', 'IN_PROGRESS', 2, DATE_SUB(NOW(), INTERVAL 100 DAY), NOW()),
+    ('Natural Language Processor', 'NLP engine for sentiment analysis and text summarization', 'https://github.com/projecthub/nlp-engine', 'IN_PROGRESS', 2, DATE_SUB(NOW(), INTERVAL 95 DAY), NOW()),
+    ('Recommendation Engine', 'Machine learning-based recommendation system for e-commerce', 'https://github.com/projecthub/recommender', 'COMPLETED', 2, DATE_SUB(NOW(), INTERVAL 110 DAY), NOW()),
+
+    -- Web Development Projects
+    ('E-Commerce Platform', 'Full-featured online shopping platform with payment integration', 'https://github.com/projecthub/ecommerce', 'IN_PROGRESS', 3, DATE_SUB(NOW(), INTERVAL 80 DAY), NOW()),
+    ('Social Media Dashboard', 'Analytics dashboard for social media management', 'https://github.com/projecthub/social-dashboard', 'IN_PROGRESS', 3, DATE_SUB(NOW(), INTERVAL 75 DAY), NOW()),
+    ('Content Management System', 'Headless CMS with RESTful API and GraphQL support', 'https://github.com/projecthub/cms', 'COMPLETED', 3, DATE_SUB(NOW(), INTERVAL 100 DAY), NOW()),
+
+    -- Mobile App Projects
+    ('Fitness Tracking App', 'Cross-platform fitness app with workout plans and nutrition tracking', 'https://github.com/projecthub/fitness-tracker', 'IN_PROGRESS', 4, DATE_SUB(NOW(), INTERVAL 70 DAY), NOW()),
+    ('Food Delivery App', 'Real-time food ordering and delivery tracking application', 'https://github.com/projecthub/food-delivery', 'IN_PROGRESS', 4, DATE_SUB(NOW(), INTERVAL 65 DAY), NOW()),
+    ('Language Learning App', 'Interactive language learning platform with AI-powered tutoring', 'https://github.com/projecthub/lang-learn', 'PENDING', 4, DATE_SUB(NOW(), INTERVAL 30 DAY), NOW()),
+
+    -- Database Projects
+    ('Distributed Database System', 'Horizontally scalable distributed database with ACID compliance', 'https://github.com/projecthub/distributed-db', 'IN_PROGRESS', 5, DATE_SUB(NOW(), INTERVAL 90 DAY), NOW()),
+    ('Data Warehouse Solution', 'Enterprise data warehouse with ETL pipelines and analytics', 'https://github.com/projecthub/data-warehouse', 'IN_PROGRESS', 5, DATE_SUB(NOW(), INTERVAL 85 DAY), NOW()),
+    ('Database Migration Tool', 'Automated database migration and schema versioning tool', 'https://github.com/projecthub/db-migrate', 'COMPLETED', 5, DATE_SUB(NOW(), INTERVAL 95 DAY), NOW()),
+
+    -- Security Projects
+    ('Penetration Testing Framework', 'Automated security testing and vulnerability assessment tool', 'https://github.com/projecthub/pentest-framework', 'IN_PROGRESS', 6, DATE_SUB(NOW(), INTERVAL 80 DAY), NOW()),
+    ('Encryption Library', 'High-performance encryption library with multiple algorithms', 'https://github.com/projecthub/crypto-lib', 'COMPLETED', 6, DATE_SUB(NOW(), INTERVAL 85 DAY), NOW()),
+    ('Security Audit System', 'Continuous security monitoring and compliance checking system', 'https://github.com/projecthub/security-audit', 'IN_PROGRESS', 6, DATE_SUB(NOW(), INTERVAL 75 DAY), NOW()),
+
+    -- Game Development Projects
+    ('RPG Game Engine', '2D/3D game engine with physics and particle systems', 'https://github.com/projecthub/rpg-engine', 'IN_PROGRESS', 7, DATE_SUB(NOW(), INTERVAL 120 DAY), NOW()),
+    ('Multiplayer Battle Arena', 'Real-time multiplayer game with matchmaking and leaderboards', 'https://github.com/projecthub/battle-arena', 'IN_PROGRESS', 7, DATE_SUB(NOW(), INTERVAL 110 DAY), NOW()),
+    ('Puzzle Game Collection', 'Collection of brain-teasing puzzle games', 'https://github.com/projecthub/puzzle-games', 'COMPLETED', 7, DATE_SUB(NOW(), INTERVAL 100 DAY), NOW()),
+
+    -- Data Science Projects
+    ('Predictive Analytics Platform', 'Machine learning platform for business forecasting', 'https://github.com/projecthub/predictive-analytics', 'IN_PROGRESS', 8, DATE_SUB(NOW(), INTERVAL 90 DAY), NOW()),
+    ('Data Visualization Tool', 'Interactive data visualization and reporting tool', 'https://github.com/projecthub/data-viz', 'IN_PROGRESS', 8, DATE_SUB(NOW(), INTERVAL 85 DAY), NOW()),
+    ('Big Data Processing Pipeline', 'Distributed data processing pipeline using Apache Spark', 'https://github.com/projecthub/bigdata-pipeline', 'COMPLETED', 8, DATE_SUB(NOW(), INTERVAL 95 DAY), NOW());
+
+    -- Generate 270 more projects
+    INSERT INTO projects (title, description, repo_link, status, group_id, created_at, updated_at)
+    SELECT 
+        CONCAT('Project ', n.num, ': ', 
+            ELT(MOD(n.num, 10) + 1, 
+                'Web Application', 'Mobile App', 'API Service', 'Data Pipeline', 
+                'ML Model', 'IoT System', 'Blockchain DApp', 'DevOps Tool',
+                'Analytics Platform', 'Security Tool'
+            )
+        ) as title,
+        CONCAT('Description for project ', n.num, '. This is a comprehensive project focusing on modern software development practices and cutting-edge technologies. The project aims to solve real-world problems using innovative approaches.') as description,
+        CONCAT('https://github.com/projecthub/project-', n.num) as repo_link,
+        ELT(MOD(n.num, 4) + 1, 'PENDING', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED') as status,
+        (MOD(n.num, 50) + 1) as group_id,
+        DATE_SUB(NOW(), INTERVAL FLOOR(RAND() * 180) DAY) as created_at,
+        NOW() as updated_at
+    FROM (
+        SELECT 31 + a.N + b.N * 10 + c.N * 100 as num
+        FROM 
+            (SELECT 0 AS N UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) a,
+            (SELECT 0 AS N UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) b,
+            (SELECT 0 AS N UNION SELECT 1 UNION SELECT 2) c
+        WHERE 31 + a.N + b.N * 10 + c.N * 100 <= 300
+    ) n;
+
+    -- =====================================================
+    -- SUMMARY
+    -- =====================================================
+    -- Total Users: 150
+    -- Total Groups: 50
+    -- Total Projects: 300
+    -- Total Group Memberships: ~350-400
+    -- =====================================================
+
+    SELECT 'Database initialization completed!' as Status;
+    SELECT COUNT(*) as TotalUsers FROM users;
+    SELECT COUNT(*) as TotalGroups FROM user_groups;
+    SELECT COUNT(*) as TotalProjects FROM projects;
+    SELECT COUNT(*) as TotalMemberships FROM user_group_members;

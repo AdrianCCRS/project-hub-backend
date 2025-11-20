@@ -43,6 +43,7 @@ echo -e "${GREEN}✓ Namespace created/updated${NC}"
 echo -e "\n${GREEN}Step 2: Deploying MySQL...${NC}"
 microk8s kubectl apply -f ${K8S_DIR}/mysql-configmap.yaml
 microk8s kubectl apply -f ${K8S_DIR}/mysql-secret.yaml
+microk8s kubectl apply -f ${K8S_DIR}/mysql-initdb-configmap.yaml
 microk8s kubectl apply -f ${K8S_DIR}/mysql-pvc.yaml
 microk8s kubectl apply -f ${K8S_DIR}/mysql-deployment.yaml
 microk8s kubectl apply -f ${K8S_DIR}/mysql-service.yaml
